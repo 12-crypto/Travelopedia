@@ -7,7 +7,7 @@ An intelligent, adaptive travel planning system powered by multi-agent AI orches
 ## 🧠 Overview
 
 This system transforms fragmented travel planning into an intelligent, dynamic experience using:
-
+<img width="3420" height="1674" alt="image" src="https://github.com/user-attachments/assets/9ae6726f-5ee9-454c-adc7-d62c6148ae66" />
 - **Llama-based Orchestrator** for reasoning & planning
 - **GNN Agent** for personalized recommendations
 - **Real-time API Integration** for flights, hotels, and weather
@@ -16,7 +16,7 @@ This system transforms fragmented travel planning into an intelligent, dynamic e
 - **PDF Export** for downloadable itineraries
 
 ## 🏗️ Architecture
-<img width="3420" height="1674" alt="image" src="https://github.com/user-attachments/assets/9ae6726f-5ee9-454c-adc7-d62c6148ae66" />
+
 ```
 ai-travel-planner/
 ├── backend/               # Core AI agents and orchestration
