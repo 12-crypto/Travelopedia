@@ -3,6 +3,8 @@
 An intelligent, adaptive travel planning system powered by multi-agent AI orchestration, real-time data integration, and personalized recommendations.
 <img width="2454" height="1154" alt="image" src="https://github.com/user-attachments/assets/3194d74a-afe7-44f5-9410-694b132c9eea" />
 <img width="2482" height="1166" alt="image" src="https://github.com/user-attachments/assets/12b5f48e-da72-4d40-9498-3677eea1a559" />
+<img width="3420" height="1674" alt="image" src="https://github.com/user-attachments/assets/9ae6726f-5ee9-454c-adc7-d62c6148ae66" />
+
 
 
 
