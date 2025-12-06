@@ -63,6 +63,7 @@ class ItineraryAgent:
         logger.info("Consolidating travel itinerary")
         
         selected = optimized_budget['selected_options']
+        flight_leg = self._format_flight_leg(selected['flight'], 'outbound') if selected['flight'] else None
         
         itinerary = {
             'itinerary_id': f"ITN-{datetime.now().strftime('%Y%m%d%H%M%S')}",
@@ -82,8 +83,8 @@ class ItineraryAgent:
                 'breakdown': optimized_budget['actual_costs']
             },
             'transportation': {
-                'outbound_flight': self._format_flight_leg(selected['flight'], 'outbound') if selected['flight'] else None,
-                'return_flight': None  # Return flight is included in outbound_flight object
+                'outbound_flight': flight_leg,
+                'return_flight': flight_leg.get('return') if flight_leg else None
             },
             'accommodation': self._format_hotel(selected['hotel']) if selected['hotel'] else None,
             'activities': self._format_activities(selected['activities']),
@@ -237,14 +238,9 @@ class ItineraryAgent:
         if itinerary['activities']:
             story.append(Paragraph("🎯 Recommended Activities", heading_style))
             for i, activity in enumerate(itinerary['activities'][:10], 1):  # Limit to 10 activities
-                story.append(Paragraph(
-                    f"{i}. <b>{activity['name']}</b> - ${activity['price']:.2f}",
-                    styles['Normal']
-                ))
-                story.append(Paragraph(
-                    f"   {activity['description']} ({activity['duration_hours']} hours)",
-                    styles['Normal']
-                ))
+                price_val = activity.get('price', 0) or 0
+                story.append(Paragraph(f"{i}. <b>{activity['name']}</b> - ${price_val:.2f}", styles['Normal']))
+                story.append(Paragraph(f"   {activity['description']} ({activity['duration_hours']} hours)", styles['Normal']))
                 story.append(Spacer(1, 0.1*inch))
             
             story.append(Spacer(1, 0.3*inch))

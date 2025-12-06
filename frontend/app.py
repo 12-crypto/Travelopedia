@@ -99,19 +99,9 @@ def main():
                 )
             
             with col2:
-                # Ensure all values are datetime.date for comparison
-                if isinstance(start_date, datetime):
-                    start_date = start_date.date()
-                if isinstance(min_date, datetime):
-                    min_date = min_date.date()
-                if isinstance(max_date, datetime):
-                    max_date = max_date.date()
-                default_end = start_date + timedelta(days=7)
-                if isinstance(default_end, datetime):
-                    default_end = default_end.date()
                 end_date = st.date_input(
                     "End Date",
-                    value=min(max_date, max(default_end, start_date)),
+                    value=min_date + timedelta(days=35),
                     min_value=start_date,
                     max_value=max_date
                 )
@@ -370,12 +360,59 @@ def show_results_view():
     # Quick feedback
     show_quick_feedback()
     
+    # Analytics Dashboard - At the bottom with button
+    st.markdown("---")
+    
+    # Button to show analytics dashboard
+    if st.button("📊 View Analytics Dashboard", use_container_width=True, type="secondary"):
+        st.session_state.show_analytics = not st.session_state.get('show_analytics', False)
+    
+    # Display analytics if toggled on
+    if st.session_state.get('show_analytics', False):
+        try:
+            from frontend.components.analytics_dashboard import display_analytics_dashboard, display_insights_panel
+            
+            # Prepare analytics data (without carbon footprint)
+            analytics_data = {
+                'destination': itinerary.get('destination', 'Unknown'),
+                'total_cost': itinerary.get('total_cost', 0),
+                'budget': result.get('original_budget', 3500),
+                'duration_days': itinerary.get('duration_days', 5),
+                'overall_rating': itinerary.get('overall_rating', 8.5),
+                'savings': max(0, result.get('original_budget', 3500) - itinerary.get('total_cost', 0)),
+                'budget_breakdown': itinerary.get('budget_breakdown', {
+                    'Flights': itinerary.get('total_cost', 0) * 0.35,
+                    'Hotels': itinerary.get('total_cost', 0) * 0.30,
+                    'Activities': itinerary.get('total_cost', 0) * 0.15,
+                    'Food': itinerary.get('total_cost', 0) * 0.12,
+                    'Transport': itinerary.get('total_cost', 0) * 0.05,
+                    'Other': itinerary.get('total_cost', 0) * 0.03
+                }),
+                'weather_forecast': itinerary.get('weather_forecast', []),
+                'alternatives': result.get('alternatives', [])
+            }
+            
+            st.markdown("---")
+            
+            # Display analytics dashboard
+            display_analytics_dashboard(analytics_data)
+            
+            # Display insights panel
+            st.markdown("---")
+            display_insights_panel(analytics_data)
+            
+        except ImportError as e:
+            st.warning(f"Analytics dashboard not available: {e}")
+    
     # New search button
     st.markdown("---")
     if st.button("🔄 Plan Another Trip", use_container_width=True, type="primary"):
         st.session_state.itinerary = None
         st.session_state.result = None
+        st.session_state.show_analytics = False
         st.rerun()
+
+
 
 
 def process_travel_request(request):

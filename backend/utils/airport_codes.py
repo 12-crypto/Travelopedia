@@ -3,6 +3,10 @@ Airport code converter for common cities.
 Maps city names to their primary airport IATA codes.
 """
 
+TYPO_CODES = {
+    "jsk": "JFK",  # common typo
+}
+
 AIRPORT_CODES = {
     # North America
     "new york": "JFK",
@@ -106,6 +110,10 @@ AIRPORT_CODES = {
     "kolkata, india": "CCU",
     "goa": "GOI",
     "goa, india": "GOI",
+    "hyderabad": "HYD",
+    "hyderabad, india": "HYD",
+    "ahmedabad": "AMD",
+    "ahmedabad, india": "AMD",
     
     # Oceania
     "sydney": "SYD",
@@ -157,12 +165,26 @@ def get_airport_code(city_name: str) -> str:
     # Normalize the city name
     normalized = city_name.lower().strip()
     
+    # Handle known typos to nearest major airport
+    if normalized in TYPO_CODES:
+        return TYPO_CODES[normalized]
+    
     # Check if it's already an airport code (3 letters, uppercase)
     if len(city_name) == 3 and city_name.isupper():
         return city_name
     
     # Look up in dictionary
-    return AIRPORT_CODES.get(normalized, city_name)
+    if normalized in AIRPORT_CODES:
+        return AIRPORT_CODES[normalized]
+    
+    # If user typed "City, COUNTRYCODE", try matching just the city part
+    if ',' in normalized:
+        city_only = normalized.split(',')[0].strip()
+        if city_only in AIRPORT_CODES:
+            return AIRPORT_CODES[city_only]
+    
+    # No mapping found - return original
+    return city_name
 
 
 def suggest_airport_codes(query: str) -> list:

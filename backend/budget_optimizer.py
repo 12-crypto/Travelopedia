@@ -71,16 +71,17 @@ class BudgetOptimizer:
         selected_hotel = self._select_hotel(hotels, allocation['accommodation'], duration_days)
         logger.info(f"🏨 Selected hotel: {selected_hotel['name'] if selected_hotel else 'None'} - ${selected_hotel['price']['total'] if selected_hotel else 0}")
         
-        selected_activities = self._select_activities(activities, allocation['activities'], duration_days)
-        logger.info(f"🎯 Selected {len(selected_activities)} activities totaling ${sum(a['price'] for a in selected_activities)}")
+        # Include activities using allocated budget (up to 10)
+        selected_activities = self._select_activities(activities, allocation['activities'], duration_days, max_activities=10) if activities else []
+        logger.info(f"🎯 Selected {len(selected_activities)} activities totaling ${sum(a.get('price',0) for a in selected_activities)}")
         
         # Calculate actual costs
         actual_costs = {
             'transport': selected_flight['price'] if selected_flight else 0,
             'accommodation': selected_hotel['price']['total'] if selected_hotel else 0,
-            'activities': sum(a['price'] for a in selected_activities),
-            'food': allocation['food'],
-            'miscellaneous': allocation['miscellaneous']
+            'activities': sum(a.get('price', 0) for a in selected_activities),
+            'food': allocation.get('food', 0),
+            'miscellaneous': allocation.get('miscellaneous', 0)
         }
         
         total_cost = sum(actual_costs.values())
@@ -233,7 +234,10 @@ class BudgetOptimizer:
         # Score hotels by value (rating vs price)
         for hotel in affordable:
             rating = hotel.get('rating', 3.5)
-            price_ratio = hotel['price']['total'] / budget
+            # Avoid division by zero; treat zero/near-zero budget as very small denominator
+            price_ratio = hotel['price']['total'] / budget if budget else float('inf')
+            if price_ratio == 0:
+                price_ratio = 0.0001
             
             # Higher rating and lower price ratio is better
             hotel['value_score'] = rating / price_ratio
@@ -245,7 +249,8 @@ class BudgetOptimizer:
         self,
         activities: List[Dict[str, Any]],
         budget: float,
-        duration_days: int
+        duration_days: int,
+        max_activities: int = None
     ) -> List[Dict[str, Any]]:
         """Select activities within budget."""
         # Sort activities by personalization score
@@ -257,15 +262,21 @@ class BudgetOptimizer:
         
         selected = []
         total_cost = 0
-        max_activities = duration_days * 2  # ~2 activities per day
+        max_activities = max_activities or (duration_days * 2)  # ~2 activities per day
         
         for activity in sorted_activities:
             if len(selected) >= max_activities:
                 break
+            # Handle missing or malformed price gracefully
+            price_val = activity.get('price', 0) or 0
+            try:
+                price_val = float(price_val)
+            except Exception:
+                price_val = 0
             
-            if total_cost + activity['price'] <= budget:
+            if total_cost + price_val <= budget:
                 selected.append(activity)
-                total_cost += activity['price']
+                total_cost += price_val
         
         return selected
     

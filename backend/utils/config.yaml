@@ -21,14 +21,14 @@ apis:
     enabled: true  # Real API enabled
     provider: "serpapi"
     timeout: 30
-    mock_fallback: false
+    mock_fallback: true
   
   # Hotel APIs
   hotel:
     enabled: true  # Real API enabled
     provider: "serpapi"
     timeout: 30
-    mock_fallback: false
+    mock_fallback: true
   
   # Weather APIs
   weather:

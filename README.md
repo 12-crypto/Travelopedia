@@ -46,7 +46,7 @@ ai-travel-planner/
 ./run.sh
 ```
 
-Then choose option 1 for the Web UI
+Then choose option 1 for the Web UI.
 
 ### Manual Setup
 
@@ -152,16 +152,14 @@ python tests/test_new_features.py
 - **Budget-based filtering** - Filters results by budget constraints
 
 ### Personalization GNN (`personalization_gnn.py`)
-- **Graph-based preference modeling** - Models users, preferences, and destinations as interconnected nodes
-- **Activity scoring** - Ranks activities by matching user preferences (adventure, cultural, etc.) with ratings and budget
-- **Smart recommendations** - Scores activities on a 0-100 scale combining preference match (+30 points), ratings, and price level
-- **Cached embeddings** - 64-dimensional user vectors for fast similarity computations
+- Graph Neural Network for user preferences
+- Historical behavior analysis
+- Contextual recommendations
 
 ### Budget Optimizer (`budget_optimizer.py`)
-- **Pareto optimization** - Generates 3 alternatives (Budget/Standard/Comfort) exploring cost-quality tradeoffs
-- **Smart allocation** - Splits budget across 5 categories: transport (35%), accommodation (35%), food, activities, misc
-- **Value scoring** - Ranks options by quality-per-dollar (flights: stops penalty, hotels: rating/price, activities: personalization)
-- **Better recommendations** - Top-3 hit rate improvement through multi-objective optimization
+- Pareto optimization for cost vs. comfort
+- Multiple itinerary options
+- Value scoring
 
 ### Itinerary Agent (`itinerary_agent.py`)
 - Consolidates all recommendations
@@ -190,6 +188,9 @@ Edit `backend/utils/config.yaml` to customize:
 
 Sample input is provided in `backend/utils/sample_input.json` for testing the backend pipeline independently.
 
+## 🤝 Contributing
+
+This is a demonstration project showcasing AI orchestration and real-time travel planning capabilities.
 
 ## 📄 License
 
